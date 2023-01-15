@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.judgeTool.mapper.RecordMapper">
+
+    <resultMap id="BaseResultMap" type="cn.judgeTool.entity.Record">
+            <id property="id" column="id" jdbcType="INTEGER"/>
+            <result property="caseName" column="case_name" jdbcType="VARCHAR"/>
+            <result property="caseFacts" column="case_facts" jdbcType="VARCHAR"/>
+            <result property="eventType" column="event_type" jdbcType="VARCHAR"/>
+            <result property="typeId" column="type_ID" jdbcType="INTEGER"/>
+            <result property="triggers" column="triggers" jdbcType="VARCHAR"/>
+            <result property="arguments" column="arguments" jdbcType="VARCHAR"/>
+            <result property="caseJudgement" column="case_judgement" jdbcType="VARCHAR"/>
+            <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+            <result property="uid" column="uid" jdbcType="VARCHAR"/>
+            <result property="tid" column="tid" jdbcType="INTEGER"/>
+            <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+            <result property="status" column="status" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,case_name,case_facts,
+        event_type,type_ID,trigger,
+        arguments,case_judgement,create_time,
+        uid,tid,update_time,
+        status
+    </sql>
+
+    <select id="selectWeekCount" resultType="java.lang.Integer" parameterType="java.lang.String">
+        SELECT COUNT(*) FROM t_record
+        WHERE create_time BETWEEN DATE_SUB(NOW(), INTERVAL DAYOFWEEK(NOW())-1 DAY) AND NOW() AND uid = #{uid}
+    </select>
+
+    <select id="selectDayCount" resultType="java.lang.Integer" parameterType="java.lang.String">
+        SELECT COUNT(*) FROM t_record
+        WHERE create_time BETWEEN CAST(NOW() AS DATE) AND NOW() AND uid = #{uid};
+    </select>
+
+    <select id="selectSotaCount" resultType="map">
+        SELECT uid, COUNT(*) as record_count FROM t_record
+        WHERE create_time BETWEEN CAST(NOW() AS DATE) AND NOW()
+        GROUP BY uid
+        ORDER BY record_count DESC LIMIT 1
+    </select>
+</mapper>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.judgeTool.mapper.CrimeCaseMapper">
+
+    <resultMap id="BaseResultMap" type="cn.judgeTool.entity.CrimeCase">
+            <id property="id" column="id" jdbcType="INTEGER"/>
+            <result property="crime" column="crime" jdbcType="VARCHAR"/>
+            <result property="detailId" column="detail_id" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,crime,detail_id
+    </sql>
+    <select id="selectAllNamesWithNum" resultType="java.lang.String">
+        SELECT CONCAT(crime,"(",count(DISTINCT id),")") AS `name` FROM `t_crime_case` GROUP BY crime
+    </select>
+</mapper>

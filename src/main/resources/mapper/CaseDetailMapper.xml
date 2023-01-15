@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.judgeTool.mapper.CaseDetailMapper">
+
+    <resultMap id="BaseResultMap" type="cn.judgeTool.entity.CaseDetail">
+            <id property="id" column="id" jdbcType="VARCHAR"/>
+            <id property="paperId" column="paper_id" jdbcType="VARCHAR"/>
+            <result property="name" column="name" jdbcType="VARCHAR"/>
+            <result property="baseInfo" column="base_info" jdbcType="VARCHAR"/>
+            <result property="analysisProcess" column="analysis_process" jdbcType="VARCHAR"/>
+            <result property="result" column="result" jdbcType="VARCHAR"/>
+            <result property="paperName" column="paper_name" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,paper_id,name,
+        base_info,analysis_process,result,
+        paper_name
+    </sql>
+
+    <select id="selectBriefByPaperId" resultType="cn.judgeTool.entity.CaseDetail">
+        SELECT
+            id,name,result
+        FROM
+            `t_case_detail`
+        WHERE
+            paper_id = #{paperId}
+    </select>
+</mapper>
