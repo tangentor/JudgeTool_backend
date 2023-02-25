@@ -1,6 +1,7 @@
 package cn.judgeTool.service;
 
 import cn.judgeTool.entity.BlockTodo;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.List;
@@ -15,4 +16,6 @@ public interface BlockTodoService extends IService<BlockTodo> {
 	List<BlockTodo> listByUid(String uid);
 
 	boolean insertOrUpdate(BlockTodo blockTodo);
+
+	Page<BlockTodo> getPage(int pageNum);
 }

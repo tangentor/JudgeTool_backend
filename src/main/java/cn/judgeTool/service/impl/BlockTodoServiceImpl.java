@@ -10,11 +10,13 @@ import cn.judgeTool.service.TaskTodoService;
 import cn.judgeTool.util.UsernameUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import javax.xml.transform.Source;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -39,7 +41,8 @@ public class BlockTodoServiceImpl extends ServiceImpl<BlockTodoMapper, BlockTodo
 		LambdaQueryWrapper<BlockTodo> wrapper = new LambdaQueryWrapper<>();
 		wrapper.like(BlockTodo::getReportor,uid)
 				.or()
-				.like(BlockTodo::getCheckor,uid);
+				.like(BlockTodo::getCheckor,uid)
+				.orderByDesc(BlockTodo::getTime);
 		List<BlockTodo> list = this.list(wrapper);
 		list.forEach(v->v.setTaskTodo(taskTodoService.getById(v.getTodoId())));
 		return list;
@@ -76,6 +79,24 @@ public class BlockTodoServiceImpl extends ServiceImpl<BlockTodoMapper, BlockTodo
 		}
 		blockTodo.setTime(new Date());
 		return this.saveOrUpdate(blockTodo);
+	}
+
+	@Override
+	public Page<BlockTodo> getPage(int pageNum) {
+		Page<BlockTodo> page = new Page<>(pageNum, 15);
+		String uid = UsernameUtil.getLoginUser();
+		LambdaQueryWrapper<BlockTodo> wrapper = new LambdaQueryWrapper<>();
+		wrapper.like(BlockTodo::getReportor,uid)
+				.or()
+				.like(BlockTodo::getCheckor,uid)
+				.orderByDesc(BlockTodo::getTime);
+		//返回所有结果
+		Page<BlockTodo> blockTodoPage = this.getBaseMapper().selectPage(page, wrapper);
+		//填充todo信息
+		List<BlockTodo> records = blockTodoPage.getRecords();
+		records.forEach(v-> v.setTaskTodo(taskTodoService.getById(v.getTodoId())));
+		blockTodoPage.setRecords(records);
+		return blockTodoPage;
 	}
 }
 

@@ -16,15 +16,17 @@ import javax.annotation.Resource;
 import java.util.Date;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
-* @author a2576
-* @description 针对表【t_record】的数据库操作Service实现
-* @createDate 2022-12-21 13:45:52
-*/
+ * @author a2576
+ * @description 针对表【t_record】的数据库操作Service实现
+ * @createDate 2022-12-21 13:45:52
+ */
 @Service
 public class RecordServiceImpl extends ServiceImpl<RecordMapper, Record>
-    implements RecordService{
+		implements RecordService {
 
 	@Resource
 	private RecordMapper recordMapper;
@@ -38,6 +40,7 @@ public class RecordServiceImpl extends ServiceImpl<RecordMapper, Record>
 	@Resource
 	private UserService userService;
 
+
 	@Override
 	@Transactional
 	public boolean saveAndUpdateTodo(Record record) {
@@ -49,9 +52,9 @@ public class RecordServiceImpl extends ServiceImpl<RecordMapper, Record>
 		record.setUid(user);
 		TaskTodo taskTodo = taskTodoService.getById(record.getTodoId());
 		//查看状态
-		if(taskTodo.getStatus()==1){
+		if (taskTodo.getStatus() == 1) {
 			//判断是标注修改还是验证
-			if(!taskTodo.getUid().equals(user)){
+			if (!taskTodo.getUid().equals(user)) {
 				taskTodo.setStatus(2);
 			} else {
 				taskTodo.setStatus(1);
@@ -82,16 +85,19 @@ public class RecordServiceImpl extends ServiceImpl<RecordMapper, Record>
 	public String sota() {
 		String key = "judge:sota";
 		//查缓存
-		if(redisUtil.hasKey(key)){
+		if (redisUtil.hasKey(key)) {
 			return redisUtil.get(key).toString();
 		} else {
 			Map<String, Object> map = recordMapper.selectSotaCount();
+			if (map == null) {
+				return "";
+			}
 //			System.out.println(map);
 			String name = userService.detail(map.get("uid").toString()).getNickname();
 			System.out.println(name);
-			String sota = name+":"+map.get("record_count");
+			String sota = name + ":" + map.get("record_count");
 			//一分钟
-			redisUtil.set(key,sota,60);
+			redisUtil.set(key, sota, 60);
 			return sota;
 		}
 	}

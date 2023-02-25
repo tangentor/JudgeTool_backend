@@ -35,7 +35,7 @@ public class UserServiceImpl implements UserService {
 		} else {
 			userList = JSONUtil.toObject(userClient.listUser(), Result.class).getData() ;
 			//设置redis,有效时间一小时
-			redisUtil.set("judge:userList",userList,60*60);
+			redisUtil.set("judge:userList",userList);
 		}
 		List list = JSONUtil.toObject(userList, List.class);
 		ArrayList<User> users = new ArrayList<>(list.size());
