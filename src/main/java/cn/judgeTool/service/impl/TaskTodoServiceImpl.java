@@ -169,11 +169,15 @@ public class TaskTodoServiceImpl extends ServiceImpl<TaskTodoMapper, TaskTodo>
 	public int getCurrentProgress() {
 		//查询总条数
 		int all = this.count();
+		//重写逻辑，指定固定的总数10000条，完成条数为record个数，等同于状态为1的todo个数
 		QueryWrapper<TaskTodo> wrapper = new QueryWrapper<>();
-        wrapper.eq("status", 0);
-        int undo = taskTodoMapper.selectCount(wrapper);
-        int done = all - undo;
-		return Math.round(((float)done/(float)all)*100);
+        wrapper.eq("status", 1);
+        int done = taskTodoMapper.selectCount(wrapper);
+//        int done = all - undo;
+		//重写逻辑，指定固定的总数10000条，完成条数为record个数
+		return Math.round(((float)done/(float)10000)*100);
+//		return Math.round(((float)done/(float)all)*100);
+
 	}
 }
 
